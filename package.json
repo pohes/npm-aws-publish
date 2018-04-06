@@ -1,0 +1,35 @@
+{
+  "author": {
+    "name": "Ron Poches",
+    "email": "rpohes@gmail.com"
+  },
+  "bin": {
+    "publish-lambda": "bin/publish-lambda.js",
+    "set-firehose-event": "bin/publish-lambda.js"
+  },
+  "devDependencies": {
+    "aws-sdk": "2.197.0",
+    "repack-zip": "^0.2.4"
+  },
+  "description": "build and deploy a lambda function",
+  "keywords": [
+    "pack",
+    "dependencies",
+    "lambda",
+    "publish",
+    "zip"
+  ],
+  "main": "index.js",
+  "name": "yaga-npm",
+  "optionalDependencies": {},
+  "readme": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/yagaron/yaga-npm.git"
+  },
+  "scripts": {
+    "build-lambda": "mkdir -p build && repack-zip . $npm_package_lambda_zipPath",
+    "test": "node bin/publish-lambda.js"
+  },
+  "version": "0.0.1"
+}
