@@ -20,12 +20,12 @@
     "zip"
   ],
   "main": "index.js",
-  "name": "yaga-npm",
+  "name": "npm-aws-publish",
   "optionalDependencies": {},
   "readme": "README.md",
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/yagaron/yaga-npm.git"
+    "url": "https://github.com/pohes/npm-aws-publish.git"
   },
   "scripts": {
     "build-lambda": "mkdir -p build && repack-zip . $npm_package_lambda_zipPath",
