@@ -4,8 +4,8 @@
     "email": "rpohes@gmail.com"
   },
   "bin": {
-    "publish-lambda": "bin/publish-lambda.js",
-    "set-firehose-event": "bin/publish-lambda.js"
+    "npm-aws": "bin/npm-aws.js",
+    "publish-lambda": "bin/publish-lambda.js"
   },
   "devDependencies": {
     "aws-sdk": "2.197.0",
@@ -16,6 +16,8 @@
     "pack",
     "dependencies",
     "lambda",
+    "elasticbeanstalk",
+    "aws",
     "publish",
     "zip"
   ],
@@ -28,8 +30,9 @@
     "url": "https://github.com/pohes/npm-aws-publish.git"
   },
   "scripts": {
+    "build": "mkdir -p build && repack-zip . $npm_package_awsPublish_zipPath",
     "build-lambda": "mkdir -p build && repack-zip . $npm_package_lambda_zipPath",
     "test": "node bin/publish-lambda.js"
   },
-  "version": "0.0.1"
+  "version": "0.0.2"
 }
