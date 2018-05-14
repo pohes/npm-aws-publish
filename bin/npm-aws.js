@@ -4,13 +4,12 @@
 
 const console = require('console')
 const ElasticBeanstalkDeployment = require('../lib/eb/ElasticBeanstalkDeployment')
-const ElasticBeanstalkCommit = require('../lib/eb/ElasticBeanstalkCommit')
 
 const args = process.argv.slice(2)
 
 
 const scriptIndex = args.findIndex(
-  x => x === 'build' || x === 'lambda-publish' || x === 'eb-publish' || x === 'eb-commit' || x === 'eb-swap'|| x === 'eb-terminate-non-active'
+  x => x === 'build' || x === 'lambda-publish' || x === 'eb-publish' || x === 'eb-commit' || x === 'eb-swap' || x === 'eb-terminate-non-active'
 )
 
 if (scriptIndex === -1) {
@@ -31,49 +30,60 @@ let zipPath = process.env.npm_package_awsPublish_zipPath ?
 switch (script) {
   // case 'build':
   case 'lambda-publish': {
-
     break
   }
   case 'eb-publish': {
     let elasticBeanstalkDeployment
     try {
-      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath, args[2], zipPath, args[3])
+      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath, args[3])
     } catch (e) {
       console.error(e)
       console.log('USAGE: npm-aws eb-publish<region> <versionLabel> [description]')
       process.exit(1)
     }
-    elasticBeanstalkDeployment.publishNewVersion()
-      .then(() => elasticBeanstalkDeployment.createEnvironment())
+    elasticBeanstalkDeployment.publishNewVersion(zipPath, args[2])
+      .then(() => elasticBeanstalkDeployment.createAndCheckEnvironment(args[2]))
     break
   }
-  case 'eb-swap': {
-    let elasticBeanstalkCommit
+  case 'eb-commit': {
+    let elasticBeanstalkDeployment
     try {
-      console.log('das')
-      elasticBeanstalkCommit = new ElasticBeanstalkCommit(args[1], configPath)
+      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath)
+    } catch (e) {
+      console.error(e)
+      console.log('USAGE: npm-aws eb-commit <region>')
+      process.exit(1)
+    }
+    elasticBeanstalkDeployment.commit()
+      // .then((res) => console.log(res))
+    break
+
+  }
+  case 'eb-swap': {
+    let elasticBeanstalkDeployment
+    try {
+      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath)
     } catch (e) {
       console.error(e)
       console.log('USAGE: npm-aws eb-swap <region>')
       process.exit(1)
     }
-    elasticBeanstalkCommit.swapEnvironments()
+    elasticBeanstalkDeployment.swapEnvironments()
       .then((res) => console.log(res))
     break
   }
   case 'eb-terminate-non-active': {
-    let elasticBeanstalkCommit
+    let elasticBeanstalkDeployment
     try {
-      elasticBeanstalkCommit = new ElasticBeanstalkCommit(args[1], configPath)
+      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath)
     } catch (e) {
       console.error(e)
       console.log('USAGE: npm-aws eb-terminate-non-active <region>')
       process.exit(1)
     }
-    elasticBeanstalkCommit.terminateNonActiveEnvironment()
+    elasticBeanstalkDeployment.terminateNonActiveEnvironment()
       .then((res) => console.log(res))
     break
-
   }
   default:
     console.log('Not yet supported script "' + script + '".')
