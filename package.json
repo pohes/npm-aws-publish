@@ -34,5 +34,5 @@
     "build-lambda": "mkdir -p build && repack-zip . $npm_package_lambda_zipPath",
     "test": "node bin/publish-lambda.js"
   },
-  "version": "0.0.4"
+  "version": "0.0.5"
 }
