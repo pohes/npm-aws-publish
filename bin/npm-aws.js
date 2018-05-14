@@ -27,6 +27,11 @@ let zipPath = process.env.npm_package_awsPublish_zipPath ?
   process.cwd() + "/" + process.env.npm_package_awsPublish_zipPath
   : process.cwd() + "/" + process.env.npm_package_name + ".zip"
 
+function logDone(res) {
+  console.log(res)
+  console.log("*** SUCCESS ****")
+}
+
 switch (script) {
   // case 'build':
   case 'lambda-publish': {
@@ -42,7 +47,10 @@ switch (script) {
       process.exit(1)
     }
     elasticBeanstalkDeployment.publishNewVersion(zipPath, args[2])
-      .then(() => elasticBeanstalkDeployment.createAndCheckEnvironment(args[2]))
+      .then(
+        () => elasticBeanstalkDeployment.createAndCheckEnvironment(args[2])
+          .then((res) => logDone(res))
+      )
     break
   }
   case 'eb-commit': {
@@ -55,7 +63,7 @@ switch (script) {
       process.exit(1)
     }
     elasticBeanstalkDeployment.commit()
-      // .then((res) => console.log(res))
+      .then((res) => logDone(res))
     break
 
   }
@@ -69,7 +77,7 @@ switch (script) {
       process.exit(1)
     }
     elasticBeanstalkDeployment.swapEnvironments()
-      .then((res) => console.log(res))
+      .then((res) => logDone(res))
     break
   }
   case 'eb-terminate-non-active': {
@@ -82,7 +90,7 @@ switch (script) {
       process.exit(1)
     }
     elasticBeanstalkDeployment.terminateNonActiveEnvironment()
-      .then((res) => console.log(res))
+      .then((res) => logDone(res))
     break
   }
   default:
