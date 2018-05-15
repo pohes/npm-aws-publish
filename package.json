@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "aws-sdk": "2.197.0",
-    "repack-zip": "^0.2.4"
+    "yargs": "^11.0.0"
   },
   "description": "build and deploy a lambda function",
   "keywords": [
@@ -30,9 +30,7 @@
     "url": "https://github.com/pohes/npm-aws-publish.git"
   },
   "scripts": {
-    "build": "mkdir -p build && repack-zip . $npm_package_awsPublish_zipPath",
-    "build-lambda": "mkdir -p build && repack-zip . $npm_package_lambda_zipPath",
     "test": "node bin/publish-lambda.js"
   },
-  "version": "0.0.5"
+  "version": "0.0.7"
 }

@@ -5,97 +5,56 @@
 const console = require('console')
 const ElasticBeanstalkDeployment = require('../lib/eb/ElasticBeanstalkDeployment')
 
-const args = process.argv.slice(2)
-
-
-const scriptIndex = args.findIndex(
-  x => x === 'build' || x === 'lambda-publish' || x === 'eb-publish' || x === 'eb-commit' || x === 'eb-swap' || x === 'eb-terminate-non-active'
-)
-
-if (scriptIndex === -1) {
-  console.log('USAGE: npm-aws <command> <region> [parameters]' + args)
-  process.exit(1)
-}
-const script = scriptIndex === -1 ? args[0] : args[scriptIndex]
-// const nodeArgs = scriptIndex > 0 ? args.slice(0, scriptIndex) : []
-
-let configPath = process.env.npm_package_awsPublish_configPath ?
-  process.cwd() + "/" + process.env.npm_package_awsPublish_configPath
-  : process.cwd() + "/aws-publish-config.json"
-
-let zipPath = process.env.npm_package_awsPublish_zipPath ?
-  process.cwd() + "/" + process.env.npm_package_awsPublish_zipPath
-  : process.cwd() + "/" + process.env.npm_package_name + ".zip"
-
 function logDone(res) {
   console.log(res)
   console.log("*** SUCCESS ****")
 }
 
-switch (script) {
-  // case 'build':
-  case 'lambda-publish': {
-    break
-  }
-  case 'eb-publish': {
-    let elasticBeanstalkDeployment
-    try {
-      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath, args[3])
-    } catch (e) {
-      console.error(e)
-      console.log('USAGE: npm-aws eb-publish<region> <versionLabel> [description]')
-      process.exit(1)
-    }
-    elasticBeanstalkDeployment.publishNewVersion(zipPath, args[2])
-      .then(
-        () => elasticBeanstalkDeployment.createAndCheckEnvironment(args[2])
-          .then((res) => logDone(res))
-      )
-    break
-  }
-  case 'eb-commit': {
-    let elasticBeanstalkDeployment
-    try {
-      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath)
-    } catch (e) {
-      console.error(e)
-      console.log('USAGE: npm-aws eb-commit <region>')
-      process.exit(1)
-    }
-    elasticBeanstalkDeployment.commit()
-      .then((res) => logDone(res))
-    break
-
-  }
-  case 'eb-swap': {
-    let elasticBeanstalkDeployment
-    try {
-      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath)
-    } catch (e) {
-      console.error(e)
-      console.log('USAGE: npm-aws eb-swap <region>')
-      process.exit(1)
-    }
-    elasticBeanstalkDeployment.swapEnvironments()
-      .then((res) => logDone(res))
-    break
-  }
-  case 'eb-terminate-non-active': {
-    let elasticBeanstalkDeployment
-    try {
-      elasticBeanstalkDeployment = new ElasticBeanstalkDeployment(args[1], configPath)
-    } catch (e) {
-      console.error(e)
-      console.log('USAGE: npm-aws eb-terminate-non-active <region>')
-      process.exit(1)
-    }
-    elasticBeanstalkDeployment.terminateNonActiveEnvironment()
-      .then((res) => logDone(res))
-    break
-  }
-  default:
-    console.log('Not yet supported script "' + script + '".')
-    break
+function ebServiceInstance(argv) {
+  return new ElasticBeanstalkDeployment(argv.region, `${process.cwd()}/${argv.config}`, argv.description)
 }
+
+function defaultOptions(yargs) {
+  return yargs.demandOption(['region', 'config']).option('description')
+    .choices('region', ['us-east-1', 'us-east-2'])
+    .default('config', process.env.npm_package_awsPublish_config)
+}
+
+const argv = require('yargs')
+  .usage('Usage: $0 <command> [options]')
+  .command('eb-publish'
+    , 'Deploy a app package to eb, create a staging environment for the app or update the existing staging env'
+    , (yargs) => defaultOptions(yargs).demandOption(['zip', 'version_label']).default('zip', process.env.npm_package_awsPublish_zip)
+    , async (argv) => {
+      let elasticBeanstalkDeployment = ebServiceInstance(argv)
+      await elasticBeanstalkDeployment.publishNewVersion(`${process.cwd()}/${argv.zip}`, argv.version_label)
+      let environmentDescription = await elasticBeanstalkDeployment.createAndCheckEnvironment(argv.version_label)
+      logDone(environmentDescription)
+    })
+  .command('eb-commit'
+    , 'Swap URLS between environments and terminate the old environment'
+    , (yargs) => defaultOptions(yargs)
+    , async (argv) => {
+      let environmentDescription = await ebServiceInstance(argv).commit()
+      logDone(environmentDescription)
+    })
+  .command('eb-swap'
+    , 'Swap URLS between 2 existing environments'
+    , (yargs) => defaultOptions(yargs)
+    , async (argv) => {
+      let environmentDescription = await ebServiceInstance(argv).swapEnvironments()
+      logDone(environmentDescription)
+    })
+  .command('eb-terminate-non-active'
+    , 'Terminate the non active environment'
+    , (yargs) => defaultOptions(yargs)
+    , async (argv) => {
+      let environmentDescription = await ebServiceInstance(argv).terminateNonActiveEnvironment()
+      logDone(environmentDescription)
+    })
+  .demandCommand()
+  .help()
+  .argv
+
 
 
