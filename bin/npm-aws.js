@@ -59,9 +59,10 @@ const argv = require('yargs')
     })
   .command('lambda-publish'
     , 'publish the lambda function'
-    , (yargs) => defaultOptions(yargs).demandOption('zip','publish').default('zip', process.env.npm_package_awsPublish_zip).default('publish',false)
+    , (yargs) => defaultOptions(yargs).demandOption('zip').default('zip', process.env.npm_package_awsPublish_zip)
+      .default('publish', false).boolean('publish')
     , async (argv) => {
-      let environmentDescription = await lambdaServiceInstance(argv).publishNewVersion(`${process.cwd()}/${argv.zip}`,argv.publish)
+      let environmentDescription = await lambdaServiceInstance(argv).publishNewVersion(`${process.cwd()}/${argv.zip}`, argv.publish)
       logDone(environmentDescription)
     })
   .demandCommand(2)
