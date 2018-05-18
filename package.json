@@ -7,7 +7,8 @@
     "npm-aws": "bin/npm-aws.js",
     "publish-lambda": "bin/publish-lambda.js"
   },
-  "devDependencies": {
+
+  "dependencies": {
     "aws-sdk": "2.197.0",
     "yargs": "^11.0.0"
   },
@@ -32,5 +33,5 @@
   "scripts": {
     "test": "node bin/publish-lambda.js"
   },
-  "version": "0.0.7"
+  "version": "0.0.8"
 }

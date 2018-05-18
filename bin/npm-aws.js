@@ -4,6 +4,7 @@
 
 const console = require('console')
 const ElasticBeanstalkDeployment = require('../lib/eb/ElasticBeanstalkDeployment')
+const LambdaDeployment = require('../lib/lambda/LambdaDeployment')
 
 function logDone(res) {
   console.log(res)
@@ -12,6 +13,10 @@ function logDone(res) {
 
 function ebServiceInstance(argv) {
   return new ElasticBeanstalkDeployment(argv.region, `${process.cwd()}/${argv.config}`, argv.description)
+}
+
+function lambdaServiceInstance(argv) {
+  return new LambdaDeployment(argv.region, `${process.cwd()}/${argv.config}`, argv.description)
 }
 
 function defaultOptions(yargs) {
@@ -52,7 +57,14 @@ const argv = require('yargs')
       let environmentDescription = await ebServiceInstance(argv).terminateNonActiveEnvironment()
       logDone(environmentDescription)
     })
-  .demandCommand()
+  .command('lambda-publish'
+    , 'publish the lambda function'
+    , (yargs) => defaultOptions(yargs).demandOption('zip','publish').default('zip', process.env.npm_package_awsPublish_zip).default('publish',false)
+    , async (argv) => {
+      let environmentDescription = await lambdaServiceInstance(argv).publishNewVersion(`${process.cwd()}/${argv.zip}`,argv.publish)
+      logDone(environmentDescription)
+    })
+  .demandCommand(2)
   .help()
   .argv
 

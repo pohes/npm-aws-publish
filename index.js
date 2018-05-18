@@ -4,7 +4,7 @@ AWS.config.update({region: 'us-east-1'});
 
 
 function createNew(config, publish, zipPath, lambda) {
-    console.log("****function dont exist, creating ...");
+    console.log("****function don't exist, creating ...");
     config.Publish = publish;
     config.Code = {ZipFile: require('fs').readFileSync(zipPath)};
     lambda.createFunction(config, function (err, createResult) {
@@ -21,7 +21,6 @@ function publishLambda(config, zipPath, description, publish) {
     const lambda = new AWS.Lambda();
     config.Description = description;
 
-    console.log("publish description : " + config.Description);
     console.log("uploading : " + zipPath);
 
     lambda.updateFunctionConfiguration(config, function (err, configResult) {
