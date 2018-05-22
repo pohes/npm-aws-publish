@@ -1,10 +1,10 @@
-#npm-aws-publish
+# npm-aws-publish
 Simple aws publishing tools. 
 The package handles 2 common use cases :
 * Web application deployment to elastic beanstalk.
 * Lambda based micro service. 
 ---
-##Elastic Beanstalk 
+## Elastic Beanstalk 
 The eb scripts handles the common use case of green-blue deployment of a web application artifact. 
 1. The package is deployed to s3 and labeled as a new deployment package (version label).
 2. A new elastic beanstalk environment is created or updated(if exists) with the new deployment package or new configuration. 
@@ -12,8 +12,8 @@ The eb scripts handles the common use case of green-blue deployment of a web app
 4. Once the new version deployment is validated, it is 'committed' so it will be swapped with the existing prod version.
 5. After swapping environments the old environment can be terminated.
 
-###how to use the scripts?
-####The config file 
+### how to use the scripts?
+#### The config file 
 The web application should include a config file (json file) which defines the environment which the deployment will run in.
 a sample of a config file is in the example project. 
 The config file is actually the defined by the aws api for [creating a new elastic beanstalk environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/api/API_CreateEnvironment.html),
