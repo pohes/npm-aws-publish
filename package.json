@@ -4,15 +4,13 @@
     "email": "rpohes@gmail.com"
   },
   "bin": {
-    "npm-aws": "bin/npm-aws.js",
-    "publish-lambda": "bin/publish-lambda.js"
+    "npm-aws": "bin/npm-aws.js"
   },
-
   "dependencies": {
     "aws-sdk": "2.197.0",
     "yargs": "^11.0.0"
   },
-  "description": "build and deploy a lambda function",
+  "description": "Simple solution for common use cases of aws deployments, for lambda based micro service or web application",
   "keywords": [
     "pack",
     "dependencies",
@@ -22,16 +20,12 @@
     "publish",
     "zip"
   ],
-  "main": "index.js",
   "name": "npm-aws-publish",
   "optionalDependencies": {},
   "readme": "README.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/pohes/npm-aws-publish.git"
-  },
-  "scripts": {
-    "test": "node bin/publish-lambda.js"
   },
   "version": "0.0.8"
 }
