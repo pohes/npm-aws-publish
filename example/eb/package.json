@@ -1,0 +1,31 @@
+{
+  "name": "my-webapp",
+  "version": "0.0.1",
+  "awsPublish": {
+    "zip": "eb-build/my-webapp.zip",
+    "config": "eb-environment.json"
+  },
+  "dependencies": {
+    "aws-sdk": "2.197.0",
+    "body-parser": "^1.16.1",
+    "config": "^1.30.0",
+    "express": "^4.14.1"
+  },
+  "devDependencies": {
+    "npm-aws-publish": "0.0.8",
+    "npm-pack-zip": "^1.2.6"
+  },
+  "bundledDependencies": [
+    "aws-sdk",
+    "config",
+    "express"
+  ],
+  "scripts": {
+    "server": "node index.js",
+    "pack": "mkdir -p eb-build && npm-pack-zip --src . --dst eb-build",
+    "deploy": "npm run pack && npm-aws eb-publish",
+    "commit": "npm-aws eb-commit",
+    "swap-environment": "npm-aws eb-swap",
+    "terminate-non-active": "npm-aws eb-terminate-non-active"
+  }
+}

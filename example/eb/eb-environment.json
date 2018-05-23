@@ -1,0 +1,48 @@
+{
+  "ApplicationName": "my-webapp",
+  "SolutionStackName": "64bit Amazon Linux 2018.03 v4.5.0 running Node.js",
+  "CNAMEPrefix": "my-webapp",
+  "OptionSettings": [
+    {
+      "Namespace": "aws:elasticbeanstalk:container:nodejs",
+      "Value": "npm run server",
+      "OptionName": "NodeCommand"
+    },
+    {
+      "Namespace": "aws:elasticbeanstalk:container:nodejs",
+      "Value": "8.11.1",
+      "OptionName": "NodeVersion"
+    },
+    {
+      "Namespace": "aws:elasticbeanstalk:application:environment",
+      "Value": "production",
+      "OptionName": "NODE_ENV"
+    },
+    {
+      "Namespace": "aws:elasticbeanstalk:application:environment",
+      "Value": "8081",
+      "OptionName": "PORT"
+    },
+    {
+      "Namespace": "aws:autoscaling:launchconfiguration",
+      "Value": "AWSElasticBeanstalkWebTier",
+      "OptionName": "IamInstanceProfile",
+      "ResourceName": "AWSEBAutoScalingLaunchConfiguration"
+    },
+    {
+      "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+      "Value": "false",
+      "OptionName": "DeleteOnTerminate"
+    },
+    {
+      "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+      "Value": "7",
+      "OptionName": "RetentionInDays"
+    },
+    {
+      "Namespace": "aws:elasticbeanstalk:cloudwatch:logs",
+      "Value": "true",
+      "OptionName": "StreamLogs"
+    }
+  ]
+}
