@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "aws-sdk": "2.197.0",
-    "body-parser": "^1.16.1",
     "config": "^1.30.0",
     "express": "^4.14.1"
   },
