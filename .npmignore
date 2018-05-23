@@ -1,0 +1,11 @@
+*.iml
+*.zip
+*.ipr
+*.lock
+*.md
+package-lock.json
+*.yml
+*.log
+.idea
+example
+*.tgz
