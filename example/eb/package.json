@@ -11,7 +11,6 @@
     "express": "^4.14.1"
   },
   "devDependencies": {
-    "npm-aws-publish": "0.0.8",
     "npm-pack-zip": "^1.2.6"
   },
   "bundledDependencies": [
@@ -22,9 +21,9 @@
   "scripts": {
     "server": "node index.js",
     "pack": "mkdir -p eb-build && npm-pack-zip --src . --dst eb-build",
-    "deploy": "npm run pack && npm-aws eb-publish",
-    "commit": "npm-aws eb-commit",
-    "swap-environment": "npm-aws eb-swap",
-    "terminate-non-active": "npm-aws eb-terminate-non-active"
+    "deploy": "npm run pack && ../../bin/npm-aws.js eb-publish",
+    "commit": "../../bin/npm-aws.js eb-commit",
+    "swap-environment": "../../bin/npm-aws.js eb-swap",
+    "terminate-non-active": "../../bin/npm-aws.js eb-terminate-non-active"
   }
 }

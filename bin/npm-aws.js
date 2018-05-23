@@ -6,9 +6,15 @@ const console = require('console')
 const ElasticBeanstalkDeployment = require('../lib/eb/ElasticBeanstalkDeployment')
 const LambdaDeployment = require('../lib/lambda/LambdaDeployment')
 
-function logDone(res) {
+function logSuccess(res) {
   console.log(res)
   console.log("*** SUCCESS ****")
+}
+
+function fail(res) {
+  console.log(res)
+  console.log("*** FAIL ****")
+  process.exit(1);
 }
 
 function ebServiceInstance(argv) {
@@ -32,30 +38,32 @@ const argv = require('yargs')
     , (yargs) => defaultOptions(yargs).demandOption(['zip', 'version_label']).default('zip', process.env.npm_package_awsPublish_zip)
     , async (argv) => {
       let elasticBeanstalkDeployment = ebServiceInstance(argv)
+      await elasticBeanstalkDeployment.createApplicationIfNeeded()
       await elasticBeanstalkDeployment.publishNewVersion(`${process.cwd()}/${argv.zip}`, argv.version_label)
       let environmentDescription = await elasticBeanstalkDeployment.createAndCheckEnvironment(argv.version_label)
-      logDone(environmentDescription)
+      if (environmentDescription.Status === 'Ready') logSuccess(environmentDescription)
+      else fail(environmentDescription)
     })
   .command('eb-commit'
     , 'Swap URLS between environments and terminate the old environment'
     , (yargs) => defaultOptions(yargs)
     , async (argv) => {
       let environmentDescription = await ebServiceInstance(argv).commit()
-      logDone(environmentDescription)
+      logSuccess(environmentDescription)
     })
   .command('eb-swap'
     , 'Swap URLS between 2 existing environments'
     , (yargs) => defaultOptions(yargs)
     , async (argv) => {
       let environmentDescription = await ebServiceInstance(argv).swapEnvironments()
-      logDone(environmentDescription)
+      logSuccess(environmentDescription)
     })
   .command('eb-terminate-non-active'
     , 'Terminate the non active environment'
     , (yargs) => defaultOptions(yargs)
     , async (argv) => {
       let environmentDescription = await ebServiceInstance(argv).terminateNonActiveEnvironment()
-      logDone(environmentDescription)
+      logSuccess(environmentDescription)
     })
   .command('lambda-publish'
     , 'publish the lambda function'
@@ -63,7 +71,7 @@ const argv = require('yargs')
       .default('publish', false).boolean('publish')
     , async (argv) => {
       let environmentDescription = await lambdaServiceInstance(argv).publishNewVersion(`${process.cwd()}/${argv.zip}`, argv.publish)
-      logDone(environmentDescription)
+      logSuccess(environmentDescription)
     })
   .demandCommand(2)
   .help()
