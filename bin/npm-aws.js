@@ -5,6 +5,7 @@
 const console = require('console')
 const ElasticBeanstalkDeployment = require('../lib/eb/ElasticBeanstalkDeployment')
 const LambdaDeployment = require('../lib/lambda/LambdaDeployment')
+const ApigatewayDeployment = require('../lib/apigateway/ApiGatewayDeployment')
 
 function logSuccess(res) {
   console.log(res)
@@ -14,7 +15,7 @@ function logSuccess(res) {
 function fail(res) {
   console.log(res)
   console.log("*** FAIL ****")
-  process.exit(1);
+  process.exit(1)
 }
 
 function ebServiceInstance(argv) {
@@ -23,6 +24,10 @@ function ebServiceInstance(argv) {
 
 function lambdaServiceInstance(argv) {
   return new LambdaDeployment(argv.region, `${process.cwd()}/${argv.config}`, argv.description)
+}
+
+function apigatewayServiceInstance(argv) {
+  return new ApigatewayDeployment(argv.region, `${process.cwd()}/${argv.config}`, argv.description)
 }
 
 function defaultOptions(yargs) {
@@ -71,6 +76,15 @@ const argv = require('yargs')
       .default('publish', false).boolean('publish')
     , async (argv) => {
       let environmentDescription = await lambdaServiceInstance(argv).publishNewVersion(`${process.cwd()}/${argv.zip}`, argv.publish)
+      logSuccess(environmentDescription)
+    })
+  .command('apigateway-publish'
+    , 'publish the api to test'
+    , (yargs) => yargs.demandOption('region').choices('region', ['us-east-1', 'us-east-2'])
+      .demandOption('swagger').option('apiId')
+    , async (argv) => {
+      console.log(argv)
+      let environmentDescription = await apigatewayServiceInstance(argv).putDefinition(`${process.cwd()}/${argv.swagger}`, argv.apiId)
       logSuccess(environmentDescription)
     })
   .demandCommand(2)
