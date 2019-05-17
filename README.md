@@ -50,7 +50,7 @@ after deploying the app , it will run in an environment that will be available a
 * SolutionStackName(required) - An aws eb environment template for different types of solutions.
  each solution stack defines a configuration template, this definition can be enriched or overridden with the **OptionSettings** field, or template options can be removed with **OptionsToRemove**. the options are as cloudformation template defines.
  
- ####run the scripts
+ #### run the scripts
  Once we have a config file in our project and an artifact for the webapp, we can deploy the package to a new environment :
  
  ```
